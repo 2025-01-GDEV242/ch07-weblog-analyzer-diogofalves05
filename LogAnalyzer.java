@@ -20,7 +20,7 @@ public class LogAnalyzer
         // access counts.
         hourCounts = new int[24];
         // Create the reader to obtain the data.
-        reader = new LogfileReader("demo.log");
+        reader = new LogfileReader();
     }
 
     /**
@@ -55,4 +55,13 @@ public class LogAnalyzer
     {
         reader.printData();
     }
+    public int numberofAccesses(){
+        int total = 0;
+        //Add the value in each element of hourCounts
+        //to total.
+        for(int hour = 0; hour < hourCounts.length; hour++) {
+            total = total + hourCounts[hour];
+        }
+           return total;
+        }
 }

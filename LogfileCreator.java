@@ -30,7 +30,8 @@ public class LogfileCreator
         boolean success = false;
         
         if(numEntries > 0) {
-            try (FileWriter writer = new FileWriter(filename)) {
+            try {
+                FileWriter writer = new FileWriter(filename);
                 LogEntry[] entries = new LogEntry[numEntries];
                 for(int i = 0; i < numEntries; i++) {
                     entries[i] = createEntry();
@@ -41,6 +42,7 @@ public class LogfileCreator
                     writer.write('\n');
                 }
                 
+                writer.close();
                 success = true;
             }
             catch(IOException e) {
