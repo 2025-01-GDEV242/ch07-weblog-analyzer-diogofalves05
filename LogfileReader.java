@@ -47,7 +47,7 @@ public class LogfileReader implements Iterator<LogEntry>
         // The format for the data.
         format = "Year Month(1-12) Day Hour Minute";       
         // Where to store the data.
-        entries = new ArrayList<>();
+        entries = new ArrayList<LogEntry>();
         
         // Attempt to read the complete set of data from file.
         boolean dataRead;
@@ -68,7 +68,11 @@ public class LogfileReader implements Iterator<LogEntry>
             logfile.close();
             dataRead = true;
         }
-        catch(FileNotFoundException | URISyntaxException e) {
+        catch(FileNotFoundException e) {
+            System.out.println("Problem encountered: " + e);
+            dataRead = false;
+        }
+        catch(URISyntaxException e) {
             System.out.println("Problem encountered: " + e);
             dataRead = false;
         }
@@ -151,11 +155,32 @@ public class LogfileReader implements Iterator<LogEntry>
      */
     private void createSimulatedData(ArrayList<LogEntry> data)
     {
-        LogfileCreator creator = new LogfileCreator();
-        // How many simulated entries we want.
-        int numEntries = 100;
-        for(int i = 0; i < numEntries; i++) {
-            data.add(creator.createEntry());
+        // For each data item (year, month, day, hour, min) the lowest
+        // valid value is listed.
+        int[] lowest = { 2006, 1, 1, 0, 0, };
+        // For each data item (year, month, day, hour, min) the range of
+        // valid values is listed. (Note the simplification of having
+        // only 28 days in any month to avoid generating invalid dates.)
+        int[] range = { 3, 12, 28, 24, 60 };
+        // Use a fixed seed to generate the random data, so
+        // that the data is reproducable.
+        Random rand = new Random(12345);
+        // Build each simulated line in a string buffer.
+        StringBuffer line = new StringBuffer();
+        // How many simulated lines we want.
+        int numLines = 100;
+        // The number of data values per simulated line.
+        int itemsPerLine = lowest.length;
+        for(int i = 0; i < numLines; i++) {
+            for(int j = 0; j < itemsPerLine; j++) {
+                int value = lowest[j]+rand.nextInt(range[j]);
+                line.append(value);
+                line.append(' ');
+            }
+            // Convert the line to a LogEntry.
+            LogEntry entry = new LogEntry(line.toString());
+            data.add(entry);
+            line.setLength(0);
         }
     }
 }
